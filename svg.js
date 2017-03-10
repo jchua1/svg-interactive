@@ -10,27 +10,66 @@ var circle = function(x, y) {
     c.setAttribute('r', 15);
     c.setAttribute('fill', 'purple');
     c.setAttribute('stroke', 'black');
-    c.addEventListener('click', function(e, state) {
-	if (state == 0) {
-	    c.setAttribute('fill', 'green');
-	    state++;
-	})
+    c.setAttribute('xinc', 1);
+    c.setAttribute('yinc', 1);
+    c.addEventListener('click', change);
     pic.appendChild(c);
 };
 
 var change = function(e) {
-    if (state == 0) {
-	c.setAttribute('fill', 'green');
-	state++;
+    if (e.target.getAttribute('fill') == 'purple') {
+	e.target.setAttribute('fill', 'green');
     }
-    else
+    else {
 	pic.removeChild(e.target);
+	var x = Math.floor(Math.random() * (486 - 15) + 15);
+	var y = Math.floor(Math.random() * (486 - 15) + 15);
+	circle(x, y);
+    };
+    e.stopPropagation();
 };
 
 var create = function(e) {
     var x = e.offsetX;
     var y = e.offsetY;
-    circle(x, y);
+    circle(x, y, 1, 1);
+};
+
+var requestID;
+
+var move = function() {
+    window.cancelAnimationFrame(requestID);
+    var circles = document.getElementsByTagName('circle');
+    var draw = function() {
+	for (i = 0; i < circles.length; i++) {
+	    var c = circles[i];
+	    var x = parseInt(c.getAttribute('cx'));
+	    var y = parseInt(c.getAttribute('cy'));
+	    var r = parseInt(c.getAttribute('r'));
+	    var xinc = parseInt(c.getAttribute('xinc'));
+	    var yinc = parseInt(c.getAttribute('yinc'));
+	    c.setAttribute('cx', x + xinc);
+	    c.setAttribute('cy', y + yinc);
+	    if (x + r == 500)
+		c.setAttribute('xinc', -1);
+	    if (x - r == 0)
+		c.setAttribute('xinc', 1);
+	    if (y + r == 500)
+		c.setAttribute('yinc', -1);
+	    if (y - r == 0)
+		c.setAttribute('yinc', 1);
+	};
+	requestID = window.requestAnimationFrame(draw);
+    };
+    draw();
+};
+
+var clear = function() {
+    window.cancelAnimationFrame(requestID);
+    while (pic.lastChild)
+	pic.removeChild(pic.lastChild);
 };
 
 pic.addEventListener('click', create);
+m.addEventListener('click', move);
+c.addEventListener('click', clear);
