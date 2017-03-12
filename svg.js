@@ -2,16 +2,16 @@ var pic = document.getElementById('vimage');
 var m = document.getElementById('move');
 var c = document.getElementById('clear');
 
-var circle = function(x, y) {
+var circle = function(x, y, r, xinc, yinc) {
     var state = 0
     var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     c.setAttribute('cx', x);
     c.setAttribute('cy', y);
-    c.setAttribute('r', 15);
+    c.setAttribute('r', r);
     c.setAttribute('fill', 'purple');
     c.setAttribute('stroke', 'black');
-    c.setAttribute('xinc', 1);
-    c.setAttribute('yinc', 1);
+    c.setAttribute('xinc', xinc);
+    c.setAttribute('yinc', yinc);
     c.addEventListener('click', change);
     pic.appendChild(c);
 };
@@ -24,7 +24,7 @@ var change = function(e) {
 	pic.removeChild(e.target);
 	var x = Math.floor(Math.random() * (486 - 15) + 15);
 	var y = Math.floor(Math.random() * (486 - 15) + 15);
-	circle(x, y);
+	circle(x, y, 20, 1, 1);
     };
     e.stopPropagation();
 };
@@ -32,7 +32,7 @@ var change = function(e) {
 var create = function(e) {
     var x = e.offsetX;
     var y = e.offsetY;
-    circle(x, y, 1, 1);
+    circle(x, y, 20, 1, 1);
 };
 
 var requestID;
@@ -58,6 +58,10 @@ var move = function() {
 		c.setAttribute('yinc', -1);
 	    if (y - r == 0)
 		c.setAttribute('yinc', 1);
+	    if (x == 250) {
+		c.setAttribute('r', r/2);
+		circle(x - xinc, y, r/2, -xinc, -yinc);
+	    };
 	};
 	requestID = window.requestAnimationFrame(draw);
     };
