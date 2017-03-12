@@ -59,8 +59,12 @@ var move = function() {
 	    if (y - r == 0)
 		c.setAttribute('yinc', 1);
 	    if (x == 250) {
-		c.setAttribute('r', r/2);
-		circle(x - xinc, y, r/2, -xinc, -yinc);
+		if (r/2 == 2)
+		    pic.removeChild(c);
+		else {
+		    c.setAttribute('r', r/2);
+		    circle(x - xinc, y, r/2, -xinc, -yinc);
+		};
 	    };
 	};
 	requestID = window.requestAnimationFrame(draw);
